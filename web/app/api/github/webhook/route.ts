@@ -5,7 +5,7 @@ import { Webhooks } from '@octokit/webhooks'
 import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
 import { Octokit, App } from 'octokit'
-
+export const runtime = "nodejs";
 const appId = process.env.APP_ID as string
 const privateKey = process.env.GITHUB_APP_PRIVATE_KEY as string
 const secret = process.env.WEBHOOK_SECRET as string
