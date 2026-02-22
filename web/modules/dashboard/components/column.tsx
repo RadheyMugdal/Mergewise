@@ -13,7 +13,7 @@ export type Repository = {
   id: number
   name:string
   private:boolean,
-  installtion_id:number
+  installation_id:number
 }
 
 export const columns: ColumnDef<Repository>[] = [
@@ -57,7 +57,7 @@ export const columns: ColumnDef<Repository>[] = [
             <DropdownMenuItem onClick={(e)=>{
               e.stopPropagation()
               e.preventDefault()
-              redirect(`https://github.com/apps/RadheyMugdal-quickstart-app/installations/${row.original.installtion_id}`)
+              redirect(`https://github.com/apps/RadheyMugdal-quickstart-app/installations/${row.original.installation_id}`)
             }}>
               <Trash2 />
               Remove Repository</DropdownMenuItem>
