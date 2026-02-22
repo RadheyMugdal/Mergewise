@@ -16,6 +16,7 @@ import { Check, CreditCard, Zap, Shield, Headphones, Building2 } from "lucide-re
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import { trpc } from "@/trpc/react";
+import { UsageCard } from "./usage-card";
 
 const plans = [
   {
@@ -27,8 +28,8 @@ const plans = [
     icon: <Zap className="w-5 h-5" />,
     color: "bg-muted",
     features: [
-      { name: "3 repositories", included: true },
-      { name: "100 PR reviews/month", included: true },
+      { name: "20 reviews/month", included: true },
+      { name: "Unlimited repositories", included: true },
       { name: "Basic AI analysis", included: true },
       { name: "Code quality suggestions", included: true },
       { name: "Community support", included: true },
@@ -48,8 +49,8 @@ const plans = [
     icon: <Shield className="w-5 h-5" />,
     color: "bg-primary/10",
     features: [
+      { name: "300 reviews/month", included: true },
       { name: "Unlimited repositories", included: true },
-      { name: "Unlimited PR reviews", included: true },
       { name: "Advanced AI analysis", included: true },
       { name: "Security vulnerability scanning", included: true },
       { name: "Custom review rules", included: true },
@@ -84,7 +85,7 @@ const plans = [
   },
 ];
 const PricingView = () => {
-    const { data: subscription, isLoading } = trpc.pricing.getSubscription.useQuery()
+    const { data: subscription } = trpc.pricing.getSubscription.useQuery()
 
     // Determine the current plan slug from subscription
     const currentPlanSlug = subscription?.plan?.toLowerCase() === 'pro' ? 'pro_plan' : 'free_plan'
@@ -137,6 +138,13 @@ const PricingView = () => {
             Scale your code review workflow with AI-powered automation. Start free
             and upgrade as you grow.
           </p>
+        </div>
+
+        {/* Current Usage Card */}
+        <div className="flex justify-center">
+          <div className="w-full max-w-md">
+            <UsageCard />
+          </div>
         </div>
 
         {/* Pricing Cards */}

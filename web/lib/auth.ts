@@ -41,6 +41,10 @@ export const auth = betterAuth({
 
               case "subscription.active":
               case "subscription.updated":
+                // Calculate current_period_start from next_billing_date (subtract 1 month for monthly plans)
+                const nextBillingDate = payload.data.next_billing_date ? new Date(payload.data.next_billing_date) : null;
+                const currentPeriodStart = nextBillingDate ? new Date(nextBillingDate.getTime() - 30 * 24 * 60 * 60 * 1000) : null;
+
                 await db.insert(subscriptions)
                   .values({
                     subscription_id: payload.data.subscription_id,
@@ -49,7 +53,8 @@ export const auth = betterAuth({
                     plan: "pro",
                     status: payload.data.status,
                     cancel_at_next_billing_date: payload.data.cancel_at_next_billing_date,
-                    next_billing_date: payload.data.next_billing_date,
+                    current_period_start: currentPeriodStart,
+                    current_period_end: nextBillingDate,
                     cancelled_at: payload.data.cancelled_at
                   })
                   .onConflictDoUpdate({
@@ -57,7 +62,8 @@ export const auth = betterAuth({
                     set: {
                       status: payload.data.status,
                       cancel_at_next_billing_date: payload.data.cancel_at_next_billing_date,
-                      next_billing_date: payload.data.next_billing_date,
+                      current_period_start: currentPeriodStart,
+                      current_period_end: nextBillingDate,
                       cancelled_at: payload.data.cancelled_at
                     }
                   })

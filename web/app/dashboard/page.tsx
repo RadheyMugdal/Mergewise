@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/sidebar"
 import { RecentReviews } from "@/modules/dashboard/components/recent-reviews"
 import { StatsGrid } from "@/modules/dashboard/components/stats-card"
+import { UsageCard } from "@/modules/pricing/components/usage-card"
 import { trpc } from "@/trpc/react"
 import { Plus } from "lucide-react"
 import Link from "next/link"
@@ -181,6 +182,8 @@ export default function Page() {
                       Connect your repositories and let Mergewise analyze your code changes.
                     </p>
                   </div>
+
+                  <UsageCard />
                 </div>
               </div>
             </>

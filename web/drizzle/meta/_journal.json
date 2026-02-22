@@ -57,6 +57,13 @@
       "when": 1771755101058,
       "tag": "0007_complete_expediter",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1771772721770,
+      "tag": "0008_groovy_kang",
+      "breakpoints": true
     }
   ]
 }

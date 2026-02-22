@@ -1,10 +1,10 @@
 import { db } from '@/db'
-import { installations, repositories, reviews } from '@/db/schema'
+import { installations, repositories, reviews, account } from '@/db/schema'
 import { review_queue } from '@/lib/queue'
-import { Webhooks } from '@octokit/webhooks'
 import { eq } from 'drizzle-orm'
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest } from 'next/server'
 import { Octokit, App } from 'octokit'
+import { canUserReview } from '@/lib/usage-tracking'
 export const runtime = "nodejs";
 const appId = process.env.APP_ID as string
 const privateKey = process.env.GITHUB_APP_PRIVATE_KEY as string
@@ -71,12 +71,30 @@ app.webhooks.on("installation_repositories.removed",async ({payload})=>{
 
 app.webhooks.on('pull_request.opened',async ({payload})=>{
  try {
+   // Get the installation to find the user
+   const [installation] = await db.select({
+     user_id: installations.user_id
+   }).from(installations).where(eq(installations.id, payload.installation!.id)).limit(1)
+
+   if (!installation?.user_id) {
+     console.error('Installation not linked to user, skipping review')
+     return
+   }
+
+   // Check if user can perform review (within limits)
+   const canReview = await canUserReview(installation.user_id)
+   if (!canReview) {
+     console.log(`User ${installation.user_id} has exceeded review limit, skipping review`)
+     return
+   }
+
    await db.insert(reviews).values({
      pr_id:payload.pull_request.id,
      pr_opened:payload.pull_request.state ==="open" ?true:false,
      pr_title:payload.pull_request.title,
      pr_url:payload.pull_request.html_url,
      repo_id:payload.repository.id,
+     user_id: installation.user_id,
      status:"pending",
    })
 
@@ -95,15 +113,30 @@ app.webhooks.on('pull_request.opened',async ({payload})=>{
 })
 
 app.webhooks.on("installation.created", async ({ payload }) => {
-  const account = payload.installation.account!
-  const accountLogin = "login" in account ? account.login : account.slug
+  const installationAccount = payload.installation.account!
+  const accountLogin = "login" in installationAccount ? installationAccount.login : installationAccount.slug
+
+  // Get the user who installed the app from the sender
+  const githubUserId = String(payload.sender.id)
+
+  // Find our user by their GitHub account ID
+  const [userAccountRecord] = await db.select({
+    userId: account.userId
+  }).from(account).where(eq(account.accountId, githubUserId)).limit(1)
+
   await db.insert(installations)
     .values({
       id: payload.installation.id,
-      account_id: account.id,
+      account_id: installationAccount.id,
       account_login: accountLogin,
+      user_id: userAccountRecord?.userId || null,
     })
-    .onConflictDoNothing()
+    .onConflictDoUpdate({
+      target: installations.id,
+      set: {
+        user_id: userAccountRecord?.userId || null,
+      }
+    })
 })
 
 export  async function POST(req:NextRequest){

@@ -1,4 +1,3 @@
-import { sub } from "date-fns";
 import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, boolean, index, pgEnum } from "drizzle-orm/pg-core";
 
@@ -87,6 +86,7 @@ export const installations=pgTable("installations",(t)=>({
   id:t.bigint("id",{mode:"number"}).primaryKey(),
   account_login:t.text('account_login').notNull(),
   account_id:t.bigint('account_id',{mode:'number'}).notNull(),
+  user_id:t.text('user_id').references(()=>user.id,{onDelete:'cascade'}),
   created_at:t.timestamp('created_at').defaultNow().notNull()
 }))
 
@@ -117,6 +117,7 @@ export const reviews=pgTable('reviews',(t)=>({
   pr_url:t.text('pr_url').notNull(),
   pr_opened:t.boolean().notNull(),
   repo_id:t.bigint('repo_id',{mode:"number"}).notNull(),
+  user_id:t.text('user_id').references(()=>user.id,{onDelete:'cascade'}),
   status:reviewStatus('status'),
   review:t.text('review'),
   created_at:t.timestamp().defaultNow().notNull()
@@ -134,6 +135,7 @@ export const subscriptions=pgTable('subscriptions',(t)=>({
   created_at:t.timestamp().defaultNow().notNull(),
   status: subscriptionStatusEnum('status').notNull(),
   cancelled_at:t.timestamp('cancelled_at'),
-  next_billing_date:t.timestamp('current_period_end'),
+  current_period_start:t.timestamp('current_period_start'),
+  current_period_end:t.timestamp('current_period_end'),
   cancel_at_next_billing_date:t.boolean().notNull(),
 }))
