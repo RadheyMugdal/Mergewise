@@ -14,7 +14,7 @@ import { eq } from "drizzle-orm";
 
 export const dodoPayments = new DodoPayments({
   bearerToken: process.env.DODO_PAYMENTS_API_KEY!,
-  environment: "test_mode", // or "live_mode" for production
+  environment: process.env.NODE_ENV==="development"?"test_mode":"live_mode", // or "live_mode" for production
 });
 export const auth = betterAuth({
   plugins: [
