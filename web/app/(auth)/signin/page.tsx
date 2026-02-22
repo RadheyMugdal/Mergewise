@@ -4,13 +4,26 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Terminal, Github } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useState } from "react";
+import { CornerLoader } from "@/components/ui/corner-loader";
+
 
 export default function SignInPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+ const {data,isPending}=authClient.useSession()
+  if (isPending) {
+    return(
+       <div className="flex items-center justify-center h-screen">
+        <CornerLoader/>
+       </div>
+    )
+  }
+   if (data?.session){
+    redirect("/dashboard")
+   }
 
   const handleSignIn = async () => {
     setIsLoading(true);
