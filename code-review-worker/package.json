@@ -1,0 +1,31 @@
+{
+  "name": "github-code-reviewer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "/dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@openrouter/ai-sdk-provider": "^2.2.3",
+    "@types/ioredis": "^4.28.10",
+    "ai": "^6.0.95",
+    "bullmq": "^5.69.3",
+    "dotenv": "^17.3.1",
+    "drizzle-orm": "^0.45.1",
+    "ioredis": "^5.9.3",
+    "octokit": "^5.0.5",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}
