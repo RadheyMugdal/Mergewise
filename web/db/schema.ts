@@ -1,3 +1,4 @@
+import { sub } from "date-fns";
 import { relations } from "drizzle-orm";
 import { pgTable, text, timestamp, boolean, index, pgEnum } from "drizzle-orm/pg-core";
 
@@ -120,3 +121,19 @@ export const reviews=pgTable('reviews',(t)=>({
   review:t.text('review'),
   created_at:t.timestamp().defaultNow().notNull()
 })) 
+
+
+export const planEnum=pgEnum('plan_enum',['free','pro','enterprise'])
+export const subscriptionStatusEnum=pgEnum('subscription_status_enum',['active','on_hold','cancelled','expired','pending' ,'paused','failed'])
+export const subscriptions=pgTable('subscriptions',(t)=>({
+  id:t.uuid('id').defaultRandom().primaryKey(),
+  user_id:t.text('user_id').notNull().references(()=>user.id,{onDelete:'cascade'}),
+  subscription_id:t.text('subscription_id').notNull(),
+  product_id:t.text('product_id').notNull(),
+  plan:planEnum('plan').notNull(),
+  created_at:t.timestamp().defaultNow().notNull(),
+  status: subscriptionStatusEnum('status').notNull(),
+  cancelled_at:t.timestamp('cancelled_at'),
+  next_billing_date:t.timestamp('current_period_end'),
+  cancel_at_next_billing_date:t.boolean().notNull(),
+}))

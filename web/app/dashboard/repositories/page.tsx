@@ -102,7 +102,7 @@ export default function RepositoriesPage() {
             </div>
             <Button
               onClick={() => {
-                redirect("https://github.com/apps/RadheyMugdal-quickstart-app/installations/new")
+                redirect(`${process.env.NEXT_PUBLIC_GITHUB_INSTALLATION_URL}/new`)
               }}
             >
               <Plus className="mr-2 h-4 w-4" />
@@ -120,7 +120,7 @@ export default function RepositoriesPage() {
                   <EmptyContent>
                     <Button
                       onClick={() => {
-                        redirect("https://github.com/apps/RadheyMugdal-quickstart-app/installations/new")
+                        redirect(`${process.env.NEXT_PUBLIC_GITHUB_INSTALLATION_URL}/new`)
                       }}
                     >
                       <Plus className="mr-2 h-4 w-4" />

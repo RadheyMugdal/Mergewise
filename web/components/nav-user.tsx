@@ -11,7 +11,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
+  DropdownMenuSeparator,  
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -21,7 +21,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
-import { ChevronsUpDownIcon, LogOutIcon } from "lucide-react"
+import { ChevronsUpDownIcon, CreditCard, LogOutIcon } from "lucide-react"
 import Link from "next/link"
 
 export function NavUser() {
@@ -87,18 +87,15 @@ export function NavUser() {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link href="/dashboard" className="cursor-pointer">
-                  Dashboard
+                <Link href="/dashboard/pricing" className="cursor-pointer">
+                <CreditCard/>
+                  Billing
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/dashboard/repositories" className="cursor-pointer">
-                  Repositories
-                </Link>
-              </DropdownMenuItem>
+              
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+            <DropdownMenuItem onClick={handleSignOut} variant="destructive" className="cursor-pointer">
               <LogOutIcon />
               Log out
             </DropdownMenuItem>

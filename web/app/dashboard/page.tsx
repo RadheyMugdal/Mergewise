@@ -110,14 +110,14 @@ export default function Page() {
                     <Button
                       size="lg"
                       onClick={() => {
-                        window.location.href = "https://github.com/apps/RadheyMugdal-quickstart-app/installations/new"
+                        window.location.href = `${process.env.NEXT_PUBLIC_GITHUB_INSTALLATION_URL}/new`
                       }}
                     >
                       <Plus className="mr-2 h-5 w-5" />
                       Connect GitHub Repository
                     </Button>
                     <Button variant="outline" size="lg" asChild>
-                      <Link href="https://github.com/apps/RadheyMugdal-quickstart-app/installations/new" target="_blank">
+                      <Link href={`${process.env.NEXT_PUBLIC_GITHUB_INSTALLATION_URL}/new`} target="_blank">
                         Learn More
                       </Link>
                     </Button>
@@ -154,7 +154,7 @@ export default function Page() {
                         variant="outline"
                         className="w-full justify-start"
                         onClick={() => {
-                          window.location.href = "https://github.com/apps/RadheyMugdal-quickstart-app/installations/new"
+                          window.location.href = `${process.env.NEXT_PUBLIC_GITHUB_INSTALLATION_URL}/new`
                         }}
                       >
                         <Plus className="mr-2 h-4 w-4" />

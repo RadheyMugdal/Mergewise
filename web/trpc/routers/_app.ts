@@ -2,6 +2,7 @@ import { z } from "zod";
 import { baseProcedure, createTRPCRouter } from "../init";
 import { dashboardRouter } from "@/modules/dashboard/server/router";
 import { repositoryRouter } from "@/modules/repositories/server/router";
+import { pricingRouter } from "@/modules/pricing/server/router";
 
 export const appRouter = createTRPCRouter({
   hello: baseProcedure
@@ -17,7 +18,8 @@ export const appRouter = createTRPCRouter({
     }),
 
     dashboard:dashboardRouter,
-    repository:repositoryRouter
+    repository:repositoryRouter,
+    pricing:pricingRouter
 });
 
 // export type definition of API

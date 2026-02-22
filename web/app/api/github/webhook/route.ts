@@ -29,7 +29,7 @@ app.webhooks.on("installation_repositories.added",async ({payload})=>{
     try {
       const account = payload.installation.account!
       const accountLogin = "login" in account ? account.login : account.slug
-
+      
       await db.insert(installations).values({
         id:payload.installation.id,
         account_id:account.id,
@@ -37,7 +37,6 @@ app.webhooks.on("installation_repositories.added",async ({payload})=>{
       }).onConflictDoNothing()
 
       for(const repo of payload.repositories_added){
-
         await db.insert(repositories).values({
           id:repo.id,
           name:repo.name,
