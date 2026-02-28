@@ -16,13 +16,7 @@ export const metadata: Metadata = {
 }
 
 const DashboardLayout =async ({children}:{children:React.ReactNode}) => {
-  const session=await auth.api.getSession({
-    headers:await headers()
-  })
-
-  if (!session?.session ) {
-    redirect('/signin')
-  }
+  
   return (  
  <SidebarProvider>
      <AppSidebar />

@@ -1,5 +1,4 @@
 "use client"
-import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,9 +13,7 @@ import { Input } from "@/components/ui/input"
 import { CornerLoader } from "@/components/ui/corner-loader"
 import { Separator } from "@/components/ui/separator"
 import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
+  SidebarTrigger
 } from "@/components/ui/sidebar"
 import { columns } from "@/modules/dashboard/components/column"
 import { DataTable } from "@/modules/dashboard/components/data-table"

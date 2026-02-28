@@ -17,7 +17,7 @@ export const dashboardRouter = createTRPCRouter({
         }).from(repositories).innerJoin(
             installations,
             eq(repositories.installation_id, installations.id)
-        ).where(eq(installations.account_id, parseInt(accountData.account_id)))
+        ).where(eq(installations.account_id, accountData.account_id))
         return data
     }),
 
@@ -32,7 +32,7 @@ export const dashboardRouter = createTRPCRouter({
         }).from(repositories).innerJoin(
             installations,
             eq(repositories.installation_id, installations.id)
-        ).where(eq(installations.account_id, parseInt(accountData.account_id)))
+        ).where(eq(installations.account_id, accountData.account_id))
 
         // Get reviews by status
         const userRepoIds = await db.select({
@@ -40,7 +40,7 @@ export const dashboardRouter = createTRPCRouter({
         }).from(repositories).innerJoin(
             installations,
             eq(repositories.installation_id, installations.id)
-        ).where(eq(installations.account_id, parseInt(accountData.account_id)))
+        ).where(eq(installations.account_id, accountData.account_id))
 
         const repoIds = userRepoIds.map(r => r.id)
 
@@ -87,7 +87,7 @@ export const dashboardRouter = createTRPCRouter({
         }).from(repositories).innerJoin(
             installations,
             eq(repositories.installation_id, installations.id)
-        ).where(eq(installations.account_id, parseInt(accountData.account_id)))
+        ).where(eq(installations.account_id, accountData.account_id))
 
         const repoIds = userRepoIds.map(r => r.id)
         const repoMap = new Map(userRepoIds.map(r => [r.id, { name: r.name, full_name: r.full_name }]))

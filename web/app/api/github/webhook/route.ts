@@ -1,10 +1,11 @@
 import { db } from '@/db'
-import { installations, repositories, reviews, account } from '@/db/schema'
-import { review_queue } from '@/lib/queue'
+import { installations, repositories, reviews, account,  user } from '@/db/schema'
+
 import { eq } from 'drizzle-orm'
 import { NextRequest } from 'next/server'
 import { Octokit, App } from 'octokit'
 import { canUserReview } from '@/lib/usage-tracking'
+import RebbitMQ from '@/lib/rebbitmq'
 export const runtime = "nodejs";
 const appId = process.env.APP_ID as string
 const privateKey = process.env.GITHUB_APP_PRIVATE_KEY as string
@@ -27,13 +28,17 @@ const app = new App({
 
 app.webhooks.on("installation_repositories.added",async ({payload})=>{
     try {
-      const account = payload.installation.account!
-      const accountLogin = "login" in account ? account.login : account.slug
+      // const account = payload.installation.account!
+      // const accountLogin = "login" in account ? account.login : account.slug
+      const [accountData]=await db.select({
+        user_id:account.userId,
+        id:account.accountId
+      }).from(account).where(eq(account.accountId,String(payload.installation.account?.id)))
       
       await db.insert(installations).values({
-        id:payload.installation.id,
-        account_id:account.id,
-        account_login:accountLogin,
+        id:payload.installation.id.toString(),
+        account_id:accountData.id,
+        user_id:accountData.user_id
       }).onConflictDoNothing()
 
       for(const repo of payload.repositories_added){
@@ -42,7 +47,7 @@ app.webhooks.on("installation_repositories.added",async ({payload})=>{
           name:repo.name,
           full_name:repo.full_name,
           private:repo.private,
-          installation_id:payload.installation.id
+          installation_id:payload.installation.id.toString()
         }).onConflictDoNothing()
       }
 
@@ -74,7 +79,7 @@ app.webhooks.on('pull_request.opened',async ({payload})=>{
    // Get the installation to find the user
    const [installation] = await db.select({
      user_id: installations.user_id
-   }).from(installations).where(eq(installations.id, payload.installation!.id)).limit(1)
+   }).from(installations).where(eq(installations.id, payload.installation!.id.toString())).limit(1)
 
    if (!installation?.user_id) {
      console.error('Installation not linked to user, skipping review')
@@ -97,47 +102,22 @@ app.webhooks.on('pull_request.opened',async ({payload})=>{
      user_id: installation.user_id,
      status:"pending",
    })
-
-    await review_queue.add(`repo:${payload.repository.id} pr:${payload.pull_request.id}`,{
+   const mq=await RebbitMQ.getInstance()
+    await mq.sendToQueue('review-jobs',{
        installationId:payload.installation!.id,
        owner:payload.repository.owner.login,
        repo:payload.repository.name,
        issue_number:payload.pull_request.number,
        repo_id: payload.repository.id,
        pr_id: payload.pull_request.id,
-     })
+     },'code-review')
  } catch (error) {
   console.error(error)
  }
 
 })
 
-app.webhooks.on("installation.created", async ({ payload }) => {
-  const installationAccount = payload.installation.account!
-  const accountLogin = "login" in installationAccount ? installationAccount.login : installationAccount.slug
 
-  // Get the user who installed the app from the sender
-  const githubUserId = String(payload.sender.id)
-
-  // Find our user by their GitHub account ID
-  const [userAccountRecord] = await db.select({
-    userId: account.userId
-  }).from(account).where(eq(account.accountId, githubUserId)).limit(1)
-
-  await db.insert(installations)
-    .values({
-      id: payload.installation.id,
-      account_id: installationAccount.id,
-      account_login: accountLogin,
-      user_id: userAccountRecord?.userId || null,
-    })
-    .onConflictDoUpdate({
-      target: installations.id,
-      set: {
-        user_id: userAccountRecord?.userId || null,
-      }
-    })
-})
 
 export  async function POST(req:NextRequest){
 const payload = await req.text();
