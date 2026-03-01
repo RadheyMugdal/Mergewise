@@ -78,14 +78,13 @@ export const repositories=pgTable('repositories',(t)=>({
   name:t.text().notNull(),
   full_name:t.text().notNull(),
   private:t.boolean().notNull(),
-  installation_id:t.bigint('installation_id',{mode:"number"}).notNull().references(()=>installations.id,{onDelete:'cascade'}),
+  installation_id:t.text('installation_id').notNull().references(()=>installations.id,{onDelete:'cascade'}),
   created_at:t.timestamp('created_at').defaultNow().notNull()
 }))
 
 export const installations=pgTable("installations",(t)=>({
-  id:t.bigint("id",{mode:"number"}).primaryKey(),
-  account_login:t.text('account_login').notNull(),
-  account_id:t.bigint('account_id',{mode:'number'}).notNull(),
+  id:t.text("id").primaryKey(),
+  account_id:t.text('account_id').notNull(),
   user_id:t.text('user_id').references(()=>user.id,{onDelete:'cascade'}),
   created_at:t.timestamp('created_at').defaultNow().notNull()
 }))

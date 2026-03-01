@@ -1,1 +1,0 @@
-ALTER TABLE "subscriptions" DROP COLUMN "customer_id";

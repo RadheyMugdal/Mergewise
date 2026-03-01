@@ -5,64 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1771662062896,
-      "tag": "0000_icy_beyonder",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1771668290230,
-      "tag": "0001_regular_mephisto",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1771677073119,
-      "tag": "0002_illegal_hellfire_club",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1771689236635,
-      "tag": "0003_stale_vermin",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1771752279090,
-      "tag": "0004_yielding_yellow_claw",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1771752492660,
-      "tag": "0005_uneven_pixie",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1771753046850,
-      "tag": "0006_typical_shadow_king",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1771755101058,
-      "tag": "0007_complete_expediter",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1771772721770,
-      "tag": "0008_groovy_kang",
+      "when": 1772303987765,
+      "tag": "0000_minor_logan",
       "breakpoints": true
     }
   ]
