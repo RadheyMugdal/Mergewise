@@ -13,7 +13,7 @@ export type Repository = {
   id: number
   name:string
   private:boolean,
-  installation_id:number
+  installation_id:string
 }
 
 export const columns: ColumnDef<Repository>[] = [

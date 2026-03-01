@@ -22,7 +22,7 @@ export default function SignInPage() {
     )
   }
    if (data?.session){
-    redirect("/dashboard")
+    router.push('/dashboard')
    }
 
   const handleSignIn = async () => {
