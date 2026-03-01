@@ -1,4 +1,4 @@
-# Mergewise
+=# Mergewise
 
 > AI-powered code reviewer for GitHub — automated pull request reviews that catch bugs, security issues, and improve code quality.
 
@@ -37,13 +37,15 @@ mergewise/
 │   ├── app/             # Next.js App Router pages
 │   ├── modules/         # Feature modules
 │   ├── db/              # Database schema & migrations
+│   ├── lib/             # Shared utilities
+│   │   └── rebbitmq.ts  # RabbitMQ client singleton
 │   └── trpc/            # tRPC API routers
 │
 └── code-review-worker/  # Background worker service
     ├── src/
     │   ├── index.ts     # Main worker entry point
     │   └── utils/       # AI prompts & helpers
-    └── bullmq.config.ts # Queue configuration
+    └── package.json     # Worker dependencies
 ```
 
 ### System Architecture
@@ -61,7 +63,7 @@ mergewise/
                                 ▼
                         ┌─────────────────┐     ┌─────────────────┐
                         │                 │     │                 │
-                        │     Redis       │────▶│  BullMQ Worker  │
+                        │    RabbitMQ     │────▶│ RabbitMQ Worker │
                         │     Queue       │     │  (AI Reviewer)  │
                         │                 │     │                 │
                         └─────────────────┘     └─────────────────┘
@@ -87,18 +89,21 @@ mergewise/
 
 #### Code Review Worker ([`code-review-worker/`](./code-review-worker/))
 - **Runtime**: Node.js with TypeScript
-- **Queue**: BullMQ for async job processing
+- **Queue**: RabbitMQ (AMQP) with amqplib for async job processing
+- **Concurrency**: Prefetch(5) for parallel processing
 - **AI**: OpenRouter AI SDK for LLM integration
 - **GitHub Client**: Octokit for API interactions
 
 ### Data Flow
 
 1. **Webhook Trigger**: GitHub sends a `pull_request` webhook event
-2. **Event Handler**: Next.js API route validates and stores the review request
-3. **Job Queuing**: Review job is added to Redis queue via BullMQ
-4. **Background Processing**: Worker fetches the PR diff and sends it to AI
-5. **AI Analysis**: OpenRouter routes to the best available model for code review
-6. **Comment Posting**: Review is posted back to GitHub as a PR comment
+2. **Event Handler**: Next.js API route validates and stores the review request in PostgreSQL
+3. **Job Publishing**: Review job is published to RabbitMQ via direct exchange `code-review` with routing key `review`
+4. **Queue Binding**: Message binds to the `review-jobs` queue (durable, persistent)
+5. **Background Processing**: Worker consumes from queue (prefetch: 5), fetches PR diff, and sends to AI
+6. **Status Updates**: Review status updates in database: pending → running → completed/failed
+7. **AI Analysis**: OpenRouter routes to the best available model for code review
+8. **Comment Posting**: Review is posted back to GitHub as a PR comment via Octokit
 
 <!-- ![Data Flow Diagram](./docs/assets/data-flow.png) -->
 
@@ -115,11 +120,11 @@ mergewise/
 - [Better Auth](https://www.better-auth.com/) - Authentication
 
 ### Backend
-- [BullMQ](https://docs.bullmq.io/) - Job queue
+- [RabbitMQ](https://www.rabbitmq.com/) - Message broker with AMQP protocol
+- [amqplib](https://www.amqp.node/) - RabbitMQ client for Node.js
 - [OpenRouter](https://openrouter.ai/) - AI model routing
 - [Octokit](https://github.com/octokit/octokit.js) - GitHub API
 - [Drizzle ORM](https://orm.drizzle.team/) - Database ORM
-- [Redis](https://redis.io/) - Queue storage
 - [PostgreSQL](https://www.postgresql.org/) - Database
 
 ## Getting Started
@@ -128,7 +133,7 @@ mergewise/
 
 - Node.js 18+
 - PostgreSQL database
-- Redis instance
+- RabbitMQ instance
 - GitHub App credentials
 
 ### Installation
@@ -152,8 +157,8 @@ Create a `.env` file in the `web/` directory:
 # Database
 DATABASE_URL="postgresql://..."
 
-# Redis
-REDIS_URL="redis://..."
+# RabbitMQ (AMQP connection)
+REBBITMQ_URL="amqp://localhost"
 
 # GitHub App
 GITHUB_APP_ID="your_app_id"
