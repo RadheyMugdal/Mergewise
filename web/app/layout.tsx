@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { TRPCProvider } from "@/trpc/react";
+import { Analytics } from "@vercel/analytics/next"
 const jetbrainsMono = JetBrains_Mono({ subsets: ['latin'], variable: '--font-sans' });
 
 const geistSans = Geist({
@@ -82,8 +83,8 @@ export default function RootLayout({
     <html lang="en" className={jetbrainsMono.variable}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-
+        >
+          <Analytics/>
         <TRPCProvider>
           <TooltipProvider>
             {children}
