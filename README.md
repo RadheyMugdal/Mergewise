@@ -1,4 +1,4 @@
-=# Mergewise
+# Mergewise
 
 > AI-powered code reviewer for GitHub — automated pull request reviews that catch bugs, security issues, and improve code quality.
 
