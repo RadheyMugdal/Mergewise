@@ -1,7 +1,6 @@
 import {
   Navigation,
   Hero,
-  TrustedBy,
   Features,
   HowItWorks,
   DashboardPreview,
@@ -27,7 +26,6 @@ export default async  function LandingPage() {
       <Navigation />
       <main>
         <Hero />
-        <TrustedBy />
         <Features />
         <HowItWorks />
         <DashboardPreview />

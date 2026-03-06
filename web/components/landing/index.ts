@@ -1,6 +1,5 @@
 export { Navigation } from "./Navigation";
 export { Hero } from "./Hero";
-export { TrustedBy } from "./TrustedBy";
 export { Features } from "./Features";
 export { HowItWorks } from "./HowItWorks";
 export { DashboardPreview } from "./DashboardPreview";
